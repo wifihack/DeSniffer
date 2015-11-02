@@ -356,15 +356,21 @@ class SniffingThread(Thread):
         self.__exit = True
         
     def __make_ether(self, pkt, code):
-        to_ds = pkt.FCfield & 0x1
-        from_ds = pkt.FCfield & 0x2
+        to_ds = 1 if pkt.FCfield & 0x1 else 0
+        from_ds = 1 if pkt.FCfield & 0x2 else 0
 
-        if to_ds and from_ds:
-            return Ether(dst=pkt.addr1, src=pkt.addr3, type=code)
-        elif to_ds and (not from_ds):
-            return Ether(dst=pkt.addr3, src=pkt.addr2, type=code)
-        else:
-            return Ether(dst=pkt.addr1, src=pkt.addr2, type=code)
+        if (to_ds == 0) and (from_ds == 0):
+            #DA, SA ,BSSID
+            return Ether(src=pkt.addr2, dst=pkt.addr1, type=code)
+        elif (to_ds == 1) and (from_ds == 0):
+            #BSSID, SA, DA
+            return Ether(src=pkt.addr2, dst=pkt.addr3, type=code)
+        elif (to_ds == 0) and (from_ds == 1):
+            #DA, BSSID, SA
+            return Ether(src=pkt.addr3, dst=pkt.addr1, type=code)
+        elif (to_ds == 1) and (from_ds == 1):
+            #RA, TA, DA, SA
+            return Ether(src=pkt.addr4, dst=pkt.addr3, type=code)
 
 
 class Sniffer:
