@@ -242,6 +242,7 @@ class Ui_MainWindow(object):
         self.lineEdit_sta.setObjectName(_fromUtf8("lineEdit_sta"))
         self.horizontalLayout_sta.addWidget(self.lineEdit_sta)
         self.verticalLayout_opions.addLayout(self.horizontalLayout_sta)
+        
         self.horizontalLayout_deauth = QtGui.QHBoxLayout()
         self.horizontalLayout_deauth.setObjectName(_fromUtf8("horizontalLayout_deauth"))
         self.label_deauth = QtGui.QLabel(self.gb_options)
@@ -252,6 +253,18 @@ class Ui_MainWindow(object):
         self.checkBox_deauth.setObjectName(_fromUtf8("checkBox_deauth"))
         self.horizontalLayout_deauth.addWidget(self.checkBox_deauth)
         self.verticalLayout_opions.addLayout(self.horizontalLayout_deauth)
+        
+        self.horizontalLayout_dump = QtGui.QHBoxLayout()
+        self.horizontalLayout_dump.setObjectName(_fromUtf8("horizontalLayout_dump"))
+        self.label_dump = QtGui.QLabel(self.gb_options)
+        self.label_dump.setObjectName(_fromUtf8("label_dump"))
+        self.horizontalLayout_dump.addWidget(self.label_dump)
+        self.checkBox_dump = QtGui.QCheckBox(self.gb_options)
+        self.checkBox_dump.setText(_fromUtf8(""))
+        self.checkBox_dump.setObjectName(_fromUtf8("checkBox_dump"))
+        self.horizontalLayout_dump.addWidget(self.checkBox_dump)
+        self.verticalLayout_opions.addLayout(self.horizontalLayout_dump)
+        
         self.horizontalLayout_4.addLayout(self.verticalLayout_opions)
         self.verticalLayout_7.addWidget(self.gb_options)
         self.horizontalLayout_8 = QtGui.QHBoxLayout()
@@ -347,7 +360,7 @@ class Ui_MainWindow(object):
             self.lineEdit_sta.setText('')
         
         self.lineEdit_ssid.setText(apply_item.text(0))                 #ssid
-        self.comboBox_enc.setCurrentIndex(['OPEN',  'WEP','WPA', 'WPA2'].index(apply_item.text(3))) #enc
+        self.comboBox_enc.setCurrentIndex(['OPEN',  'WEP','WPA', 'WPA2'].index(apply_item.text(3).split('/')[-1])) #enc
         self.spinBox_channel.setValue(int(apply_item.text(2)))  #channel
         self.lineEdit_bssid.setText(apply_item.text(5))                #bssid
         
@@ -387,6 +400,7 @@ class Ui_MainWindow(object):
         self.gb_options.setTitle(_translate("MainWindow", "options", None))
         self.label_sta.setText(_translate("MainWindow", "STA MAC", None))
         self.label_deauth.setText(_translate("MainWindow", "Auto Deauth", None))
+        self.label_dump.setText(_translate("MainWindow", "Packet Dump", None))
         self.pushButton_sniff_start.setText(_translate("MainWindow", "start", None))
         self.pushButton_sniff_stop.setText(_translate("MainWindow", "stop", None))
         self.gb_log.setTitle(_translate("MainWindow", "Log", None))
@@ -396,6 +410,9 @@ class Ui_MainWindow(object):
 
 
 class Interface_Dialog(object):
+    def __init__(self):
+        self.interface = ''
+        
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.resize(231, 157)

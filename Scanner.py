@@ -67,7 +67,7 @@ class SniffingThread(Thread):
             cap = pkt.sprintf("{Dot11Beacon:%Dot11Beacon.cap%}"
             "{Dot11ProbeResp:%Dot11ProbeResp.cap%}").split('+')
 
-            crypto = ''
+            crypto = []
             while isinstance(p, Dot11Elt):
                 if p.ID == 0:
                     ssid = p.info
@@ -76,18 +76,19 @@ class SniffingThread(Thread):
                         channel = ord(p.info)
                     except:
                         return
-                elif p.ID == 48 and crypto == '':
-                    crypto = 'WPA2'
-                elif p.ID == 221 and p.info.startswith('\x00P\xf2\x01\x01\x00') and crypto == '':
-                    crypto = 'WPA'
+                elif p.ID == 48:
+                    crypto.append('WPA2')
+                elif p.ID == 221 and p.info.startswith('\x00P\xf2\x01\x01\x00'):
+                    crypto.append('WPA')
                 p = p.payload
-            if crypto == '':
+            if crypto == []:
                 if 'privacy' in cap:
-                    crypto = 'WEP'
+                    crypto.append('WEP')
                 else:
-                    crypto = 'OPEN'
+                    crypto.append('OPEN')
             bssid = pkt.addr3
-            
+            crypto.sort()
+            crypto = '/'.join(crypto)
             #new ap
             if not self.scanner.ap_check(bssid ,  ssid):
                 self.scanner.ap_list.append(AP(ssid, bssid, channel,  crypto))

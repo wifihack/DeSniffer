@@ -213,7 +213,6 @@ class Decrypter:
         rc4 = ARC4.new(rc4_key)
         dec_data = rc4.decrypt(enc_data)
         
-        print repr(dec_data)
         return LLC(dec_data)
 
 
@@ -347,6 +346,8 @@ class SniffingThread(Thread):
                             snap_data = de_pkt.getlayer(SNAP)
                             send_pkt = self.__make_ether(pkt, snap_data.code)/snap_data.payload
                             self.sniffer.send_packet(send_pkt)
+                            if self.sniffer.dump:
+                                self.sniffer.pktdump.write(send_pkt)
                         
     def cb_stop(self, pkt):
         if self.__exit:
@@ -394,6 +395,7 @@ class Sniffer:
         self.key = str(self.ui.lineEdit_key.text())
         self.hex = False if self.ui.checkBox_hex.checkState() == 0 else True
         self.deauth = False if self.ui.checkBox_deauth.checkState() == 0 else True
+        self.dump = False if self.ui.checkBox_dump.checkState() == 0 else True
         
         #wpa, wpa2 need SSID
         if self.enc in [2, 3] and self.ssid == '':
@@ -424,10 +426,18 @@ class Sniffer:
             else:
                 self.ui.textEdit_log.append('[*] Auto Deauthentication')
                 conf.iface = self.wlan.interface
+        if self.dump:
+            if not os.path.exists('./dump'):
+                os.mkdir('./dump')
+            import time
+            dump_path = time.strftime('./dump/%m-%d(%H:%M:%S).pcap', time.localtime())
+            self.ui.textEdit_log.append('[*] packet dump : %s' % dump_path)
+            self.pktdump = PcapWriter(dump_path, append=True, sync=True)
+            
         self.ui.textEdit_log.append('')
         
         if self.hex:
-            self.key = a2b_hex(self.key.decode)
+            self.key = a2b_hex(self.key)
             
     def send_packet(self,  pkt):
         try:
