@@ -295,8 +295,11 @@ class SniffingThread(Thread):
                         if not session:
                             session = WPASession(sta_mac)
                             self.session_list.append(session)
-                            
-                        eapol_raw = pkt.getlayer(Raw).load
+                        
+                        try:
+                            eapol_raw = pkt.getlayer(Raw).load
+                        except:
+                            return
                         mic = eapol_raw[13+32+32:13+32+32+16]
                         if mic == '\x00'*16:
                             #eapol message1 (reset Nonce)
