@@ -6,12 +6,19 @@
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
-import re,  sys,  os
-import socket,  fcntl,  struct
+import fcntl
+import os
+import re
+import socket
+import struct
+import sys
 from subprocess import Popen, PIPE
+
 from PyQt4 import QtCore, QtGui
 from PyQt4.Qt import *
-import Scanner,  Sniffer
+
+import Scanner
+import Sniffer
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -21,16 +28,19 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_MainWindow(object):
-    def setMainProc(self,  mainProc):
+    def setMainProc(self, mainProc):
         self.mainProc = mainProc
-        
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(760, 515)
@@ -187,7 +197,7 @@ class Ui_MainWindow(object):
         self.comboBox_enc.addItem(_fromUtf8(""))
         self.horizontalLayout_enc.addWidget(self.comboBox_enc)
         self.verticalLayout_setting.addLayout(self.horizontalLayout_enc)
-        
+
         self.horizontalLayout_key = QtGui.QHBoxLayout()
         self.horizontalLayout_key.setObjectName(_fromUtf8("horizontalLayout_key"))
         self.label_key = QtGui.QLabel(self.gb_setting)
@@ -203,7 +213,7 @@ class Ui_MainWindow(object):
         self.lineEdit_key.setObjectName(_fromUtf8("lineEdit_key"))
         self.horizontalLayout_key.addWidget(self.lineEdit_key)
         self.verticalLayout_setting.addLayout(self.horizontalLayout_key)
-        
+
         self.horizontalLayout_hex = QtGui.QHBoxLayout()
         self.horizontalLayout_hex.setObjectName(_fromUtf8("horizontalLayout_hex"))
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
@@ -218,7 +228,7 @@ class Ui_MainWindow(object):
         self.checkBox_hex.setObjectName(_fromUtf8("checkBox_hex"))
         self.horizontalLayout_hex.addWidget(self.checkBox_hex)
         self.verticalLayout_setting.addLayout(self.horizontalLayout_hex)
-       
+
         self.verticalLayout_5.addLayout(self.verticalLayout_setting)
         self.verticalLayout_7.addWidget(self.gb_setting)
         self.gb_options = QtGui.QGroupBox(self.frame_sniffer)
@@ -242,7 +252,7 @@ class Ui_MainWindow(object):
         self.lineEdit_sta.setObjectName(_fromUtf8("lineEdit_sta"))
         self.horizontalLayout_sta.addWidget(self.lineEdit_sta)
         self.verticalLayout_opions.addLayout(self.horizontalLayout_sta)
-        
+
         self.horizontalLayout_deauth = QtGui.QHBoxLayout()
         self.horizontalLayout_deauth.setObjectName(_fromUtf8("horizontalLayout_deauth"))
         self.label_deauth = QtGui.QLabel(self.gb_options)
@@ -253,7 +263,7 @@ class Ui_MainWindow(object):
         self.checkBox_deauth.setObjectName(_fromUtf8("checkBox_deauth"))
         self.horizontalLayout_deauth.addWidget(self.checkBox_deauth)
         self.verticalLayout_opions.addLayout(self.horizontalLayout_deauth)
-        
+
         self.horizontalLayout_dump = QtGui.QHBoxLayout()
         self.horizontalLayout_dump.setObjectName(_fromUtf8("horizontalLayout_dump"))
         self.label_dump = QtGui.QLabel(self.gb_options)
@@ -264,7 +274,7 @@ class Ui_MainWindow(object):
         self.checkBox_dump.setObjectName(_fromUtf8("checkBox_dump"))
         self.horizontalLayout_dump.addWidget(self.checkBox_dump)
         self.verticalLayout_opions.addLayout(self.horizontalLayout_dump)
-        
+
         self.horizontalLayout_4.addLayout(self.verticalLayout_opions)
         self.verticalLayout_7.addWidget(self.gb_options)
         self.horizontalLayout_8 = QtGui.QHBoxLayout()
@@ -337,39 +347,40 @@ class Ui_MainWindow(object):
     def __eventSetting(self):
         QtCore.QObject.connect(self.pushButton_clear, QtCore.SIGNAL(_fromUtf8("clicked()")), self.textEdit_log.clear)
         QtCore.QObject.connect(self.pushButton_scan_start, QtCore.SIGNAL(_fromUtf8("clicked()")), self.__h_scan_start)
-        QtCore.QObject.connect(self.pushButton_scan_stop,  QtCore.SIGNAL(_fromUtf8("clicked()")), self.__h_scan_stop)
-        QtCore.QObject.connect(self.pushButton_apply,  QtCore.SIGNAL(_fromUtf8("clicked()")), self.__h_apply)
+        QtCore.QObject.connect(self.pushButton_scan_stop, QtCore.SIGNAL(_fromUtf8("clicked()")), self.__h_scan_stop)
+        QtCore.QObject.connect(self.pushButton_apply, QtCore.SIGNAL(_fromUtf8("clicked()")), self.__h_apply)
         QtCore.QObject.connect(self.pushButton_sniff_start, QtCore.SIGNAL(_fromUtf8("clicked()")), self.__h_sniff_start)
-        QtCore.QObject.connect(self.pushButton_sniff_stop,  QtCore.SIGNAL(_fromUtf8("clicked()")), self.__h_sniff_stop)
-        
+        QtCore.QObject.connect(self.pushButton_sniff_stop, QtCore.SIGNAL(_fromUtf8("clicked()")), self.__h_sniff_stop)
+
     def __h_scan_start(self):
         self.mainProc.start_scan()
 
     def __h_scan_stop(self):
         self.mainProc.stop_scan()
-        
+
     def __h_apply(self):
         apply_item = self.treeWidget.currentItem()
         if apply_item == None:
             return
         if apply_item.parent() != None:
-            #sta_mac filter
+            # sta_mac filter
             self.lineEdit_sta.setText(apply_item.text(5))
             apply_item = apply_item.parent()
         else:
             self.lineEdit_sta.setText('')
-        
-        self.lineEdit_ssid.setText(apply_item.text(0))                 #ssid
-        self.comboBox_enc.setCurrentIndex(['OPEN',  'WEP','WPA', 'WPA2'].index(apply_item.text(3).split('/')[-1])) #enc
-        self.spinBox_channel.setValue(int(apply_item.text(2)))  #channel
-        self.lineEdit_bssid.setText(apply_item.text(5))                #bssid
-        
+
+        self.lineEdit_ssid.setText(apply_item.text(0))  # ssid
+        self.comboBox_enc.setCurrentIndex(
+            ['OPEN', 'WEP', 'WPA', 'WPA2'].index(apply_item.text(3).split('/')[-1]))  # enc
+        self.spinBox_channel.setValue(int(apply_item.text(2)))  # channel
+        self.lineEdit_bssid.setText(apply_item.text(5))  # bssid
+
     def __h_sniff_start(self):
         self.mainProc.start_sniff()
 
     def __h_sniff_stop(self):
         self.mainProc.stop_sniff()
-        
+
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "802.11 sniffer", None))
         self.tabWidget.setToolTip(_translate("MainWindow", "<html><head/><body><p><br/></p></body></html>", None))
@@ -382,7 +393,7 @@ class Ui_MainWindow(object):
         self.treeWidget.headerItem().setText(3, _translate("MainWindow", "ENC", None))
         self.treeWidget.headerItem().setText(4, _translate("MainWindow", "DATAs", None))
         self.treeWidget.headerItem().setText(5, _translate("MainWindow", "BSSID", None))
- 
+
         self.pushButton_scan_start.setText(_translate("MainWindow", "start", None))
         self.pushButton_scan_stop.setText(_translate("MainWindow", "stop", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_scanner), _translate("MainWindow", "scanner", None))
@@ -412,7 +423,7 @@ class Ui_MainWindow(object):
 class Interface_Dialog(object):
     def __init__(self):
         self.interface = ''
-        
+
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.resize(231, 157)
@@ -428,16 +439,18 @@ class Interface_Dialog(object):
         self.horizontalLayout.addWidget(self.listWidget)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Vertical)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.horizontalLayout.addWidget(self.buttonBox)
 
         self.retranslateUi(Dialog)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
-        QtCore.QObject.connect(self.listWidget, QtCore.SIGNAL(_fromUtf8("currentItemChanged(QListWidgetItem*,QListWidgetItem*)")), self.__setInterface)
+        QtCore.QObject.connect(self.listWidget,
+                               QtCore.SIGNAL(_fromUtf8("currentItemChanged(QListWidgetItem*,QListWidgetItem*)")),
+                               self.__setInterface)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
-        
+
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(_translate("Dialog", "Interfaces", None))
         self.listWidget.setSortingEnabled(False)
@@ -453,36 +466,38 @@ class Interface_Dialog(object):
 
     def get_interface(self):
         return str(self.interface)
-        
+
     def __search_Interface(self):
         try:
             p = Popen('iwconfig', stdout=PIPE, stderr=PIPE)
         except OSError:
             print '[-] Could not execute \'iwconfig\''
             exit(-1)
-    
+
         response = p.communicate()[0]
         interface_list = []
         try:
-            interface_list = map(lambda x: x[:-4].strip(' '),  re.findall('([^\s].* IEEE)', response))
+            interface_list = map(lambda x: x[:-4].strip(' '), re.findall('([^\s].* IEEE)', response))
         except:
             interface_list = []
         return interface_list
-        
+
+
 class WLAN:
     MAX_CHANNEL = 13
+
     def __init__(self):
-        self.interface =''
+        self.interface = ''
         self.mac = ''
         self.channel = 1
-        
+
     def start_monitor(self):
         try:
-            p = Popen(['iwconfig',  self.interface], stdout=PIPE, stderr=PIPE)
+            p = Popen(['iwconfig', self.interface], stdout=PIPE, stderr=PIPE)
         except OSError:
             print '[-] Could not execute \'iwconfig\''
             exit(-1)
-            
+
         response = p.communicate()[0]
         if response.find('Monitor') == -1:
             try:
@@ -492,10 +507,10 @@ class WLAN:
             except:
                 print '[-] Could not setting monitor mode'
                 exit(-1)
-            
-    def change_channel(self,  channel=-1):
+
+    def change_channel(self, channel=-1):
         if channel == -1:
-            self.channel = (self.channel % self.MAX_CHANNEL )+ 1
+            self.channel = (self.channel % self.MAX_CHANNEL) + 1
         else:
             self.channel = channel
         os.system('iwconfig %s channel %d' % (self.interface, self.channel))
@@ -506,20 +521,21 @@ class WLAN:
         info = fcntl.ioctl(s.fileno(), 0x8927, struct.pack('256s', iface[:15]))
         self.mac = ''.join(['%02x:' % ord(char) for char in info[18:24]])[:-1]
 
-    def set_interface(self,  interface):
+    def set_interface(self, interface):
         self.interface = interface
         self.__get_mac(self.interface)
-        
+
+
 class MainProc:
-    def __init__(self,  ui):
+    def __init__(self, ui):
         self.ui = ui
         self.ui.setMainProc(self)
         self.wlan = WLAN()
         self.scanner = Scanner.Scanner(ui, self.wlan)
-        self.sniffer = Sniffer.Sniffer(ui,  self.wlan)
+        self.sniffer = Sniffer.Sniffer(ui, self.wlan)
         self.is_scanning = False
-        self.is_sniffing= False
-        
+        self.is_sniffing = False
+
     def start_scan(self):
         if self.__thread_check():
             return
@@ -527,19 +543,19 @@ class MainProc:
         if interface == '':
             return
         self.wlan.set_interface(interface)
-        
+
         self.ui.treeWidget.setSortingEnabled(False)
         self.ui.statusBar.showMessage(_fromUtf8('scanning ...'))
         self.is_scanning = True
         self.wlan.start_monitor()
         self.scanner.start()
-    
+
     def stop_scan(self):
         if self.is_scanning:
             self.is_scanning = False
             self.scanner.stop()
             self.ui.statusBar.showMessage(_fromUtf8('stopped'))
-        
+
     def start_sniff(self):
         if self.__thread_check():
             return
@@ -547,16 +563,16 @@ class MainProc:
         if interface == '':
             return
         self.wlan.set_interface(interface)
-        
+
         self.ui.statusBar.showMessage(_fromUtf8('sniffing ...'))
         self.is_sniffing = True
         self.wlan.start_monitor()
         status = self.sniffer.start()
-        if status != None:
+        if status is not None:
             self.ui.statusBar.showMessage(_fromUtf8('stopped'))
             self.__alert_message(status)
             self.is_sniffing = False
-            
+
     def __thread_check(self):
         if self.is_scanning:
             self.__alert_message('scanning thread is running')
@@ -565,29 +581,30 @@ class MainProc:
             self.__alert_message('sniffing thread is running')
             return True
         return False
-        
-    def __alert_message(self,  text):
+
+    def __alert_message(self, text):
         msgBox = QMessageBox()
         msgBox.setWindowTitle('error')
         msgBox.setText(text)
         msgBox.exec_()
-        
+
     def __wlan_popup(self):
-            self.ui.Dialog = QtGui.QDialog()
-            ui = Interface_Dialog()
-            ui.setupUi(self.ui.Dialog)
-            self.ui.Dialog.show()
-            
-            if self.ui.Dialog.exec_() == 1:
-                return ui.get_interface()
-            return ''
-            
+        self.ui.Dialog = QtGui.QDialog()
+        ui = Interface_Dialog()
+        ui.setupUi(self.ui.Dialog)
+        self.ui.Dialog.show()
+
+        if self.ui.Dialog.exec_() == 1:
+            return ui.get_interface()
+        return ''
+
     def stop_sniff(self):
         if self.is_sniffing:
             self.is_sniffing = False
             self.sniffer.stop()
             self.ui.statusBar.showMessage(_fromUtf8('stopped'))
-          
+
+
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     MainWindow = QtGui.QMainWindow()
@@ -595,6 +612,5 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     mainProc = MainProc(ui)
-    
-    sys.exit(app.exec_())
 
+    sys.exit(app.exec_())
