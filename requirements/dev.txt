@@ -20,7 +20,7 @@ pyasn1==0.1.9
 pycrypto==2.6.1
 Pygments==2.1
 pygobject==3.20.0
-pyOpenSSL==0.15.1
+pyOpenSSL==17.5.0
 python-distutils-extra==2.39
 PyYAML==3.11
 requests==2.9.1
