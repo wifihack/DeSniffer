@@ -4,7 +4,7 @@ argh==0.26.1
 blessings==1.6
 bpython==0.15
 chardet==2.3.0
-cryptography==1.2.3
+cryptography==3.2
 curtsies==0.2.6
 enum34==1.1.2
 greenlet==0.4.9
