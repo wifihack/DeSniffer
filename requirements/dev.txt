@@ -22,7 +22,7 @@ Pygments==2.1
 pygobject==3.20.0
 pyOpenSSL==17.5.0
 python-distutils-extra==2.39
-PyYAML==3.11
+PyYAML==5.4
 requests==2.9.1
 scapy==2.3.2
 shellescape==3.4.1
